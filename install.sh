@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# html-artifact installer
+# effective-html installer
 # Installs the skill globally for Claude Code, and optionally installs
 # the Playground plugin and Agentation MCP server.
 
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_DEST="${HOME}/.claude/skills/html-artifact"
+SKILL_DEST="${HOME}/.claude/skills/effective-html"
 ARTIFACTS_DIR="${HOME}/.claude/artifacts"
 CONFIG_FILE="${SKILL_DEST}/.config.json"
 
@@ -42,7 +42,7 @@ EOF
 done
 
 install_skill() {
-  bold "Installing the html-artifact skill globally"
+  bold "Installing the effective-html skill globally"
   mkdir -p "${SKILL_DEST}"
   rsync -a --delete \
     --exclude '.config.json' \
@@ -136,10 +136,10 @@ if [ -n "${ADD_ONLY}" ]; then
 fi
 
 # --- interactive flow ---
-bold "html-artifact installer"
+bold "effective-html installer"
 echo
 echo "This will install:"
-echo "  1. The html-artifact Claude skill at ${SKILL_DEST}"
+echo "  1. The effective-html Claude skill at ${SKILL_DEST}"
 echo "  2. A global artifact directory at ${ARTIFACTS_DIR}"
 echo
 echo "Then it will offer two optional integrations:"

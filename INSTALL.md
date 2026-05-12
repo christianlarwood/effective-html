@@ -9,8 +9,8 @@
 ## Quick install (interactive)
 
 ```bash
-git clone https://github.com/christianlarwood/html-artifact.git
-cd html-artifact
+git clone https://github.com/christianlarwood/effective-html.git
+cd effective-html
 ./install.sh
 ```
 
@@ -18,12 +18,12 @@ The installer will prompt you about each component:
 
 | Step | What it does | Required? |
 |---|---|---|
-| Install skill | Copies skill files to `~/.claude/skills/html-artifact/` | Yes |
+| Install skill | Copies skill files to `~/.claude/skills/effective-html/` | Yes |
 | Create artifacts dir | Creates `~/.claude/artifacts/` + global index page | Yes |
 | Playground plugin | Anthropic-official plugin for interactive HTML with live controls | Recommended |
 | Agentation MCP | Click-to-annotate in browser + feedback loop to Claude | Optional |
 
-A `.config.json` is written at `~/.claude/skills/html-artifact/.config.json` recording which extras were installed. The skill reads this at runtime to decide whether to suggest Playground / inject the Agentation toolbar.
+A `.config.json` is written at `~/.claude/skills/effective-html/.config.json` recording which extras were installed. The skill reads this at runtime to decide whether to suggest Playground / inject the Agentation toolbar.
 
 ## Add an extra later
 
@@ -54,7 +54,7 @@ Make sure Node 18+ is installed (`node --version`). The install runs `npx -y age
 On macOS the skill uses `open <file>`. On Linux it uses `xdg-open`. Otherwise the skill just prints the path — open it yourself.
 
 **Skill not triggering.**
-Restart Claude Code after installing. Confirm `~/.claude/skills/html-artifact/SKILL.md` exists.
+Restart Claude Code after installing. Confirm `~/.claude/skills/effective-html/SKILL.md` exists.
 
 ## Uninstall
 
@@ -66,4 +66,4 @@ Removes the skill. Asks before removing your artifacts folder (default: keep). D
 
 ## Opting out of extras after install
 
-To turn off the Agentation toolbar without uninstalling the MCP, edit `~/.claude/skills/html-artifact/.config.json` and set `agentation_installed` to `false`. Same for `playground_installed`.
+To turn off the Agentation toolbar without uninstalling the MCP, edit `~/.claude/skills/effective-html/.config.json` and set `agentation_installed` to `false`. Same for `playground_installed`.

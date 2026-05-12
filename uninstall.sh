@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# html-artifact uninstaller
+# effective-html uninstaller
 set -euo pipefail
 
-SKILL_DEST="${HOME}/.claude/skills/html-artifact"
+SKILL_DEST="${HOME}/.claude/skills/effective-html"
 ARTIFACTS_DIR="${HOME}/.claude/artifacts"
 
 bold() { printf "\033[1m%s\033[0m\n" "$1"; }
@@ -17,7 +17,7 @@ ask_yn() {
   case "$reply" in [yY]|[yY][eE][sS]) return 0 ;; *) return 1 ;; esac
 }
 
-bold "html-artifact uninstaller"
+bold "effective-html uninstaller"
 echo
 
 if [ -d "${SKILL_DEST}" ]; then

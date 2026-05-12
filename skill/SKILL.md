@@ -1,5 +1,5 @@
 ---
-name: html-artifact
+name: effective-html
 description: Produce a self-contained HTML artifact instead of a markdown document when the request benefits from spatial layout, color, real diagrams, interactivity, or a round-trip editor. Aggressively reach for HTML on requests phrased as "doc," "writeup," "plan," "spec," "report," "explainer," "summary," "comparison," "review," "PR description," "mockup," "diagram," "flowchart," "deck," "slides," "status update," "post-mortem," "incident report," "playground," or one-off "editor" or "tool" requests — even when the user doesn't say "HTML." Also trigger when the user asks Claude to "explain," "summarize," "compare," "explore options for," "brainstorm directions for," or "walk through" a non-trivial topic. Stay in markdown only for short conversational replies, code-only outputs, terminal-style command answers, and content that's genuinely just a few sentences. Honor the `/preview` slash command as an explicit force-HTML signal.
 ---
 
@@ -76,7 +76,7 @@ Before drafting, decide which output format fits.
 - A live preview that re-renders as the user adjusts inputs.
 - A "playground" feel — the user is exploring a parameter space, not reading a page.
 
-If the Playground plugin is installed (check `~/.claude/skills/html-artifact/.config.json` → `playground_installed: true`), emit the artifact in Playground-compatible format and tell the user how to open it. If the plugin is not installed, fall back to a single-file HTML with inline JS for controls, and mention once that `/preview --install playground` would give a better experience.
+If the Playground plugin is installed (check `~/.claude/skills/effective-html/.config.json` → `playground_installed: true`), emit the artifact in Playground-compatible format and tell the user how to open it. If the plugin is not installed, fall back to a single-file HTML with inline JS for controls, and mention once that `/preview --install playground` would give a better experience.
 
 **Use a single-file static HTML artifact** for everything else: diagrams, comparisons, reports, decks, diffs, one-off editors with self-contained state.
 
@@ -113,7 +113,7 @@ Every artifact must satisfy all of these:
 
 ## Agentation annotation integration (opt-in, selective)
 
-Check `~/.claude/skills/html-artifact/.config.json` for `agentation_installed: true`. If not installed, generate static HTML without the toolbar and — only on artifacts where annotation would have helped — mention once: "If you want to annotate this in the browser and have me iterate, run `~/.claude/skills/html-artifact/install.sh --add agentation`."
+Check `~/.claude/skills/effective-html/.config.json` for `agentation_installed: true`. If not installed, generate static HTML without the toolbar and — only on artifacts where annotation would have helped — mention once: "If you want to annotate this in the browser and have me iterate, run `~/.claude/skills/effective-html/install.sh --add agentation`."
 
 If installed, **decide per-artifact whether to inject the toolbar.** Not every artifact wants Agentation. The toolbar adds visual chrome and only pays off when the user is going to iterate. Make the call before writing.
 

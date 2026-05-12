@@ -1,4 +1,4 @@
-# html-artifact
+# effective-html
 
 A Claude Code skill that produces self-contained HTML artifacts instead of walls of markdown — when an interactive page, diagram, diff, comparison, or deck would communicate better than prose.
 
@@ -16,14 +16,14 @@ Based on [dogum/html-artifacts](https://github.com/dogum/html-artifacts) (Apache
 ## Install
 
 ```bash
-git clone https://github.com/christianlarwood/html-artifact.git
-cd html-artifact
+git clone https://github.com/christianlarwood/effective-html.git
+cd effective-html
 ./install.sh
 ```
 
 The installer is interactive. It will:
 
-1. Install the skill globally at `~/.claude/skills/html-artifact/`.
+1. Install the skill globally at `~/.claude/skills/effective-html/`.
 2. Create the global artifact directory at `~/.claude/artifacts/`.
 3. Ask if you want the Playground plugin (recommended).
 4. Ask if you want the Agentation MCP for browser annotations (optional).
