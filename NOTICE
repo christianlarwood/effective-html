@@ -1,0 +1,22 @@
+html-artifact
+Copyright 2026 Chris Larwood
+
+This product includes software originally developed by Greg Dogum
+as part of the dogum/html-artifacts project
+(https://github.com/dogum/html-artifacts), licensed under the
+Apache License, Version 2.0.
+
+The following files were vendored from dogum/html-artifacts and may
+contain modifications:
+  - skill/SKILL.md            (substantially modified; new sections added)
+  - skill/references/*.md     (used as-is)
+  - LICENSE                   (Apache 2.0, retained)
+
+The skill is conceptually based on Thariq Shihipar's gallery at
+https://thariqs.github.io/html-effectiveness/.
+
+This product OPTIONALLY integrates with Agentation
+(https://github.com/benjitaylor/agentation) at runtime via its MCP
+server. Agentation is NOT redistributed by this project; users who
+opt in install it separately via the installer. Agentation is licensed
+under PolyForm Shield 1.0.0.

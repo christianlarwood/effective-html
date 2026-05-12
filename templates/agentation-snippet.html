@@ -1,0 +1,29 @@
+<!--
+  Agentation annotation toolbar — injected by the html-artifact skill when
+  Agentation is installed locally (see ~/.claude/skills/html-artifact/.config.json).
+
+  Requires the Agentation MCP server running on localhost (default port 4747).
+  Start it with:    npx agentation-mcp server
+  Install:          ~/.claude/skills/html-artifact/install.sh --add agentation
+-->
+<script>
+(function () {
+  var ENDPOINT = "http://localhost:4747";
+  // Probe the local Agentation server. If it's not running, do nothing —
+  // the artifact still works as a plain HTML file.
+  fetch(ENDPOINT + "/health", { method: "GET" })
+    .then(function (r) { if (!r.ok) throw new Error("agentation-down"); })
+    .then(function () {
+      var s = document.createElement("script");
+      s.src = ENDPOINT + "/toolbar.js";
+      s.async = true;
+      s.dataset.endpoint = ENDPOINT;
+      s.dataset.feedbackToolbar = "true";
+      document.body.appendChild(s);
+    })
+    .catch(function () {
+      // Agentation not running. Silent fail. The user can still view the artifact.
+      // To enable annotations:  npx agentation-mcp server
+    });
+})();
+</script>
