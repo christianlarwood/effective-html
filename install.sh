@@ -96,13 +96,28 @@ install_agentation() {
     err "npx not found. Install Node.js first (https://nodejs.org)."
     return 1
   fi
-  echo "Running: npx agentation-mcp init"
-  if npx -y agentation-mcp init; then
-    ok "Agentation MCP registered with your Claude Code config."
-    dim "To run the server in the background: npx agentation-mcp server"
+  if ! command -v claude >/dev/null 2>&1; then
+    err "claude CLI not found. Install Claude Code first."
+    return 1
+  fi
+
+  # Register the MCP at user scope (global). Avoid `agentation-mcp init` —
+  # its wizard suppresses later prompts under non-TTY stdin and silently
+  # exits 0 without finishing registration.
+  echo "Registering Agentation MCP with Claude Code (user scope)..."
+
+  # Remove any pre-existing registration so we don't double-add.
+  claude mcp remove agentation >/dev/null 2>&1 || true
+
+  if claude mcp add --scope user agentation -- npx -y agentation-mcp server --mcp-only; then
+    ok "Agentation MCP registered at user scope."
+    dim "Verify with:  claude mcp list | grep agentation"
+    dim "It runs on-demand via npx — no separate server start needed."
     return 0
   fi
-  err "Agentation install failed. See https://github.com/benjitaylor/agentation"
+
+  err "Agentation registration failed. Manual command:"
+  echo "    claude mcp add --scope user agentation -- npx -y agentation-mcp server --mcp-only"
   return 1
 }
 
