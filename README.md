@@ -63,8 +63,32 @@ This removes the skill and (optionally) the global artifacts folder. It does *no
 
 ## What's not in v1
 
-- **Sharing & multi-user annotations.** Agentation itself supports threaded human↔agent conversation, but a "share this with a teammate so they can annotate" flow needs hosted infra. Tracked as future work.
+- **Sharing & multi-user annotations.** See the roadmap below.
 - **Non-HTML artifact formats** (e.g., generating a PDF or a real React app). Out of scope.
+
+## Roadmap: sharing artifacts with others
+
+Three tiers worth considering, in increasing effort:
+
+### Tier 1 — Read-only share (~1 day)
+
+Drop the `.html` on a static host (S3, Cloudflare R2, Vercel, GitHub Pages, Notion attachment). Artifacts are already self-contained — no build needed. A `/preview --share` flag would upload to a configured bucket and print the URL. Recipients open the link and read; no annotations come back.
+
+**Worth building soon.** High value, low effort, no third-party dependency. Solves the most common "send this to my teammate" need.
+
+### Tier 2 — Share + plain-text feedback (~3 days)
+
+Same upload, plus a feedback form appended to the artifact pointing at a webhook (Formspree, a small Cloudflare Worker, or a self-hosted endpoint). Recipient types comments and submits; you receive them via email or Claude polls. No element-selector precision — just freeform notes.
+
+**Solid middle ground.** Covers ~80% of "did you see my mockup?" workflows without needing a real backend.
+
+### Tier 3 — Full multi-user annotation parity (weeks, or ~1–2 days via Agentation cloud)
+
+Collaborators click elements, annotate, and you see the annotations land in your Claude session in real time. Requires: public-internet Agentation server (not localhost), auth, identity per annotation, push or polling back to your machine, hosted database.
+
+**Shortcut:** Agentation has a hosted cloud at `agentation-mcp-cloud.vercel.app/api` with an API-key model. If their cloud supports shared sessions, the skill just needs to set `AGENTATION_API_KEY` + route the toolbar to their cloud instead of localhost. Worth scouting their cloud capabilities before any build work — if they have it, this is ~1–2 days; if not, it's real product engineering.
+
+**Don't build this until Tier 1 has shipped.** Validate the read-only share use case first.
 
 ## Credits
 
