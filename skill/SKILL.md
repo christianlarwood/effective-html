@@ -111,21 +111,42 @@ Every artifact must satisfy all of these:
 
 ---
 
-## Agentation annotation integration (opt-in)
+## Agentation annotation integration (opt-in, selective)
 
-Check `~/.claude/skills/html-artifact/.config.json` for `agentation_installed: true`.
+Check `~/.claude/skills/html-artifact/.config.json` for `agentation_installed: true`. If not installed, generate static HTML without the toolbar and — only on artifacts where annotation would have helped — mention once: "If you want to annotate this in the browser and have me iterate, run `~/.claude/skills/html-artifact/install.sh --add agentation`."
 
-**If installed:** inject the Agentation toolbar snippet from `templates/agentation-snippet.html` into every artifact (just before `</body>`). The toolbar gives the user click-to-annotate on any element. When the user is iterating on an artifact, call the Agentation MCP tool `agentation_watch_annotations` to block until they submit feedback in the browser, then incorporate the annotations and regenerate.
+If installed, **decide per-artifact whether to inject the toolbar.** Not every artifact wants Agentation. The toolbar adds visual chrome and only pays off when the user is going to iterate. Make the call before writing.
 
-The Agentation feedback loop:
-1. You generate the artifact and inject the toolbar.
-2. Tell the user: "Open the file, annotate anything you want changed, and I'll wait."
-3. Call `agentation_watch_annotations` (blocks until annotations arrive or timeout).
-4. Read the returned annotations (selectors + computed styles + user notes + threaded conversation).
-5. Acknowledge each annotation, regenerate, resolve.
-6. Loop until the user says done.
+**Inject the toolbar when** the artifact is iterable:
+- Design mockups, UI prototypes, design explorations
+- Draft decks or draft documents the user will refine
+- Anything labeled "v1," "draft," "wip," "first pass"
+- Any time the user has explicitly asked for revisions in the same conversation
+- One-off editors / interactive tools (the annotation layer doesn't conflict with the editor's own UI)
 
-**If not installed:** generate static HTML without the toolbar. After delivery, mention once: "If you want to annotate this in the browser and have me iterate, run `~/.claude/skills/html-artifact/install.sh --add agentation`."
+**Skip the toolbar when** the artifact is read-once or shareable-as-finished:
+- Finished reports, post-mortems, incident timelines
+- Static diagrams, flowcharts, architecture pictures
+- Code-review writeups, PR descriptions, annotated diffs
+- Status updates, summaries
+- Anything the user said is going to a wider audience (leadership, team, reviewers)
+
+When in doubt — and when the interview didn't already settle it — ask: "Is this a draft you'll iterate on, or a final you'll share? (affects whether I add the annotation toolbar)."
+
+**When you inject the toolbar:**
+
+1. **Auto-start the Agentation HTTP server** in the background if it isn't already running:
+   ```
+   pgrep -f "agentation-mcp server" >/dev/null || \
+     (npx -y agentation-mcp server >/tmp/agentation.log 2>&1 &)
+   ```
+   The bare `server` form starts both the HTTP server on `localhost:4747` (which serves `toolbar.js` to the page) and the stdio MCP. The `--mcp-only` MCP registration does *not* run the HTTP server, so this background launch is required for the toolbar to load in the browser.
+2. **Inject the snippet** from `templates/agentation-snippet.html` before `</body>`.
+3. **Tell the user once, in chat:**
+   > "Annotation server running on port 4747. Open the artifact, click anything you want changed, then tell me to iterate. Run `pkill -f agentation-mcp` when you're done."
+4. **The feedback loop:** when the user says "iterate" / "apply the annotations" / similar, call `mcp__agentation__watch_annotations` (blocks until annotations arrive or timeout). Read the returned annotations (selectors + computed styles + user notes + thread). Regenerate the artifact, call `mcp__agentation__resolve` on each annotation, reopen. Loop until the user says done.
+
+**Conversion path.** If you produced a static artifact and the user later says "make this annotatable" or "let me mark this up," re-emit the artifact with the toolbar injected and auto-start the server.
 
 ---
 

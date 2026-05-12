@@ -10,7 +10,7 @@ Based on [dogum/html-artifacts](https://github.com/dogum/html-artifacts) (Apache
 - **Global artifact index** at `~/.claude/artifacts/index.html` listing everything across projects.
 - **Auto-open** in your default browser after write.
 - **Playground plugin routing** for artifacts that need live controls + state.
-- **Agentation annotation loop** (opt-in) — click-to-annotate in the browser, Claude waits for your feedback via MCP and iterates.
+- **Agentation annotation loop** (opt-in, selective) — click-to-annotate in the browser, Claude waits for your feedback via MCP and iterates. The toolbar is only injected on iterable artifacts (mockups, drafts, prototypes), not on finished reports or static diagrams. Claude auto-starts the Agentation HTTP server when needed; you kill it with `pkill -f agentation-mcp` when done.
 - **Stay-silent rule** during unrelated tasks. No nagware.
 
 ## Install
