@@ -137,11 +137,11 @@ When in doubt — and when the interview didn't already settle it — ask: "Is t
 
 1. **Auto-start the Agentation HTTP server** in the background if it isn't already running:
    ```
-   pgrep -f "agentation-mcp server" >/dev/null || \
-     (npx -y agentation-mcp server >/tmp/agentation.log 2>&1 &)
+   pgrep -f "agentation-mcp server$" >/dev/null || \
+     (nohup npx -y agentation-mcp server >/tmp/agentation.log 2>&1 &)
    ```
-   The bare `server` form starts both the HTTP server on `localhost:4747` (which serves `toolbar.js` to the page) and the stdio MCP. The `--mcp-only` MCP registration does *not* run the HTTP server, so this background launch is required for the toolbar to load in the browser.
-2. **Inject the snippet** from `templates/agentation-snippet.html` before `</body>`.
+   The bare `server` form starts the HTTP server on `localhost:4747` (which the React Agentation component connects to for cross-process sync with Claude Code). The `--mcp-only` form does *not* run the HTTP server — if the MCP was registered globally via `npx add-mcp`, you still need to start the HTTP-mode instance separately for the in-browser annotation UI to sync. Verify health with `curl -s http://localhost:4747/health` (should return `{"status":"ok"}`).
+2. **Inject the snippet** from `templates/agentation-snippet.html` before `</body>`. The snippet mounts Agentation as a React component via esm.sh (Agentation 3+ is shipped as a React component, not a script-tag toolbar). React, react-dom, and agentation are pinned to compatible versions via `?deps=`; do not loosen the pins.
 3. **Tell the user once, in chat:**
    > "Annotation server running on port 4747. Open the artifact, click anything you want changed, then tell me to iterate. Run `pkill -f agentation-mcp` when you're done."
 4. **The feedback loop:** when the user says "iterate" / "apply the annotations" / similar, call `mcp__agentation__watch_annotations` (blocks until annotations arrive or timeout). Read the returned annotations (selectors + computed styles + user notes + thread). Regenerate the artifact, call `mcp__agentation__resolve` on each annotation, reopen. Loop until the user says done.

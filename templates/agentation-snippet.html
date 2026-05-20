@@ -1,29 +1,42 @@
 <!--
-  Agentation annotation toolbar — injected by the html-artifact skill when
-  Agentation is installed locally (see ~/.claude/skills/html-artifact/.config.json).
+  Agentation annotation toolbar — injected by the effective-html skill when
+  Agentation is installed locally (see ~/.claude/skills/effective-html/.config.json).
 
-  Requires the Agentation MCP server running on localhost (default port 4747).
-  Start it with:    npx agentation-mcp server
-  Install:          ~/.claude/skills/html-artifact/install.sh --add agentation
+  Mounts the Agentation React component (v3+) via esm.sh so the artifact stays
+  a single self-contained .html file. Talks to the local agentation-mcp server
+  on port 4747 for cross-process sync with Claude Code.
+
+  Requires the Agentation MCP server running on localhost:4747.
+  Start it with:    npx -y agentation-mcp server
+  Install:          ~/.claude/skills/effective-html/install.sh --add agentation
+
+  React / react-dom / agentation are pinned to 18.3.1-compatible versions
+  via ?deps= to prevent esm.sh from substituting React 19 (which breaks hooks
+  via react-dom@18). Do not loosen these pins without verifying both load.
 -->
-<script>
-(function () {
-  var ENDPOINT = "http://localhost:4747";
-  // Probe the local Agentation server. If it's not running, do nothing —
-  // the artifact still works as a plain HTML file.
-  fetch(ENDPOINT + "/health", { method: "GET" })
-    .then(function (r) { if (!r.ok) throw new Error("agentation-down"); })
-    .then(function () {
-      var s = document.createElement("script");
-      s.src = ENDPOINT + "/toolbar.js";
-      s.async = true;
-      s.dataset.endpoint = ENDPOINT;
-      s.dataset.feedbackToolbar = "true";
-      document.body.appendChild(s);
-    })
-    .catch(function () {
-      // Agentation not running. Silent fail. The user can still view the artifact.
-      // To enable annotations:  npx agentation-mcp server
-    });
-})();
+<div id="agentation-root"></div>
+<script type="module">
+  try {
+    const ENDPOINT = "http://localhost:4747";
+    const ok = await fetch(ENDPOINT + "/health", { method: "GET" })
+      .then(r => r.ok)
+      .catch(() => false);
+    if (!ok) {
+      // Agentation MCP server not running. Silent fail — page still works.
+      // To enable annotations:  npx -y agentation-mcp server
+    } else {
+      const [{ default: React }, { createRoot }, mod] = await Promise.all([
+        import("https://esm.sh/react@18.3.1"),
+        import("https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1"),
+        import("https://esm.sh/agentation@3?deps=react@18.3.1,react-dom@18.3.1"),
+      ]);
+      const Agentation = mod.Agentation || mod.default;
+      const root = document.getElementById("agentation-root");
+      if (Agentation && root) {
+        createRoot(root).render(React.createElement(Agentation, { endpoint: ENDPOINT }));
+      }
+    }
+  } catch (e) {
+    console.warn("[agentation] failed to mount:", e?.message || e);
+  }
 </script>
